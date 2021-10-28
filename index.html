@@ -1220,7 +1220,7 @@
       var mesh;
 
       function createParticles() {
-        var MeshMaterial = new THREE.MeshPhongMaterial({
+        const MeshMaterial = new THREE.MeshPhongMaterial({
           color: 0xaa2949,
           specular: 0x030303,
           map: texture1,
@@ -1232,14 +1232,12 @@
         // geometry.rotateX ( -Math.PI/2 );
 
         geometry = new THREE.SphereGeometry(100, 50, 50);
+        const { faces, vertices } = geometry;
+        vertices.forEach(({ x, y, z }) => {
+          particles.push(new Particle(x, y, z, 0.1));
+        });
 
-        for (var i = 0; i < geometry.vertices.length; i++) {
-          var t = geometry.vertices[i];
-          particles.push(new Particle(t.x, t.y, t.z, 0.1));
-        }
-
-        for (i = 0; i < geometry.faces.length; i++) {
-          face = geometry.faces[i];
+        faces.forEach((face) => {
           if (
             !particles[face.b].adj.includes(face.a) &&
             !particles[face.a].adj.includes(face.b)
@@ -1250,19 +1248,19 @@
             !particles[face.a].adj.includes(face.c)
           )
             particles[face.a].adj.push(face.c);
-        }
+        });
 
-        for (i = 0; i < particles.length; i++) {
-          for (j = 0; j < particles[i].adj.length; j++) {
+        particles.forEach((particle) => {
+          const { adj } = particle;
+
+          adj.forEach((i) => {
             constraints.push([
+              particle,
               particles[i],
-              particles[particles[i].adj[j]],
-              particles[i].original.distanceTo(
-                particles[particles[i].adj[j]].original
-              ),
+              particle.original.distanceTo(particles[i].original),
             ]);
-          }
-        }
+          });
+        });
 
         mesh = new THREE.Mesh(geometry, MeshMaterial);
         scene.add(mesh);
