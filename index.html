@@ -1318,14 +1318,14 @@
         }
       }
 
-      var diff = new THREE.Vector3();
+      const diff = new THREE.Vector3();
 
       function satisfyConstraints(p1, p2, distance) {
         diff.subVectors(p2.position, p1.position);
-        var currentDist = diff.length();
+        const currentDist = diff.length();
         if (currentDist === 0) return; // prevents division by 0
-        var correction = diff.multiplyScalar(1 - distance / currentDist);
-        var correctionHalf = correction.multiplyScalar(0.5);
+        const correction = diff.multiplyScalar(1 - distance / currentDist);
+        const correctionHalf = correction.multiplyScalar(0.5);
         p1.position.add(correctionHalf);
         p2.position.sub(correctionHalf);
       }
@@ -1345,7 +1345,7 @@
 
         simulate();
 
-        for (var i = 0, il = particles.length; i < il; i++) {
+        for (let i = 0, il = particles.length; i < il; i++) {
           mesh.geometry.vertices[i].copy(particles[i].position);
         }
 
@@ -1368,42 +1368,9 @@
         renderer.setSize(w, h);
       };
 
-      // function Particle(x, y, z, mass) {
-      //   this.position = new THREE.Vector3();
-      //   this.previous = new THREE.Vector3();
-      //   this.original = new THREE.Vector3();
-      //   this.a = new THREE.Vector3(0, 0, 0);
-      //   this.mass = mass;
-      //   this.invMass = 1 / mass;
-      //   this.tmp = new THREE.Vector3();
-      //   this.tmp2 = new THREE.Vector3();
-      //   this.distance = 0;
-      //   this.adj = [];
-      //
-      //   this.position.set(x, y, z);
-      //   this.previous.set(x, y, z);
-      //   this.original.set(x, y, z);
-      // }
-
-      // Particle.prototype.addForce = function (force) {
-      //   this.a.add(this.tmp2.copy(force).multiplyScalar(this.invMass));
-      // };
-      //
-      // Particle.prototype.integrate = function (timesq) {
-      //   var newPos = this.tmp.subVectors(this.position, this.previous);
-      //   newPos.multiplyScalar(DRAG).add(this.position);
-      //   newPos.add(this.a.multiplyScalar(timesq));
-      //
-      //   this.tmp = this.previous;
-      //   this.previous = this.position;
-      //   this.position = newPos;
-      //
-      //   this.a.set(0, 0, 0);
-      // };
-
       function updateMouse() {
         raycaster.setFromCamera(mouse, camera);
-        var intersects = raycaster.intersectObjects([mesh]);
+        let intersects = raycaster.intersectObjects([mesh]);
 
         mouse3d.set(0, 0, 0);
 
