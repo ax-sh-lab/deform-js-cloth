@@ -1231,12 +1231,15 @@
         // geometry = new THREE.PlaneGeometry(dim, dim, width-1, height-1);
         // geometry.rotateX ( -Math.PI/2 );
 
-        geometry = new THREE.SphereGeometry(100, 50, 50);
+        geometry = new THREE.SphereGeometry(100, 100, 100); // modify to your linking
+        // geometry = new THREE.SphereGeometry(100, 1, 1); // modify to your linking
+
         const { faces, vertices } = geometry;
         vertices.forEach(({ x, y, z }) => {
           particles.push(new Particle(x, y, z, 0.1));
         });
 
+        //for all the neighbouring vertices
         faces.forEach((face) => {
           if (
             !particles[face.b].adj.includes(face.a) &&
