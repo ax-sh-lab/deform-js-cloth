@@ -1270,21 +1270,19 @@
         requestAnimationFrame(update);
       }
 
-      var DRAG = 0.97;
-      var PULL = 7.5;
-      var TIMESTEP = 18 / 1000;
-      var TIMESTEP_SQ = TIMESTEP * TIMESTEP;
-      var GRAVITY = 981 * 1.4;
-      var gravity = new THREE.Vector3(0, -0.98, 0).multiplyScalar(0.1);
+      const DRAG = 0.97;
+      const PULL = 7.5;
+      const TIMESTEP = 18 / 1000;
+      const TIMESTEP_SQ = TIMESTEP * TIMESTEP;
+      const GRAVITY = 981 * 1.4;
+      const gravity = new THREE.Vector3(0, -0.98, 0).multiplyScalar(0.1);
 
       function simulate() {
-        for (i = 0, il = particles.length; i < il; i++) {
-          particle = particles[i];
-
-          var force = new THREE.Vector3().copy(particle.original);
+        particles.forEach((particle) => {
+          const force = new THREE.Vector3().copy(particle.original);
           particle.addForce(force.sub(particle.position).multiplyScalar(PULL));
           particle.integrate(TIMESTEP_SQ);
-        }
+        });
 
         il = constraints.length;
 
