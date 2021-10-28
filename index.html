@@ -12,25 +12,6 @@
 
     <script src="./three.min.js"></script>
     <script src="./OrbitControls.js"></script>
-  </head>
-
-  <style>
-    * {
-      margin: 0;
-      border: 0;
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      overflow: hidden;
-      background-color: #25364c;
-    }
-    canvas {
-      width: 100%;
-      height: 100%;
-    }
-  </style>
-  <body>
     <script>
       // stats.js - http://github.com/mrdoob/stats.js
       var Stats = function () {
@@ -1106,6 +1087,61 @@
           },
         },
       });
+    </script>
+  </head>
+
+  <style>
+    * {
+      margin: 0;
+      border: 0;
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      overflow: hidden;
+      background-color: #25364c;
+    }
+    canvas {
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+  <body>
+    <script>
+      class Particle {
+        position = new THREE.Vector3();
+        previous = new THREE.Vector3();
+        original = new THREE.Vector3();
+        a = new THREE.Vector3(0, 0, 0);
+        mass = 0;
+
+        tmp = new THREE.Vector3();
+        tmp2 = new THREE.Vector3();
+        distance = 0;
+        adj = [];
+        constructor(x, y, z, mass) {
+          this.position.set(x, y, z);
+          this.previous.set(x, y, z);
+          this.original.set(x, y, z);
+          this.mass = mass;
+          this.invMass = 1 / mass;
+        }
+        addForce(force) {
+          this.a.add(this.tmp2.copy(force).multiplyScalar(this.invMass));
+        }
+
+        integrate(timesq) {
+          let newPos = this.tmp.subVectors(this.position, this.previous);
+          newPos.multiplyScalar(DRAG).add(this.position);
+          newPos.add(this.a.multiplyScalar(timesq));
+
+          this.tmp = this.previous;
+          this.previous = this.position;
+          this.position = newPos;
+
+          this.a.set(0, 0, 0);
+        }
+      }
 
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1275,7 +1311,6 @@
               if (particles[i].distance < 10) {
                 particles[i].position.add(
                   offset.multiplyScalar(1.0 - 0 * (distance / 10))
-
                 );
               }
             }
@@ -1333,38 +1368,38 @@
         renderer.setSize(w, h);
       };
 
-      function Particle(x, y, z, mass) {
-        this.position = new THREE.Vector3();
-        this.previous = new THREE.Vector3();
-        this.original = new THREE.Vector3();
-        this.a = new THREE.Vector3(0, 0, 0);
-        this.mass = mass;
-        this.invMass = 1 / mass;
-        this.tmp = new THREE.Vector3();
-        this.tmp2 = new THREE.Vector3();
-        this.distance = 0;
-        this.adj = [];
+      // function Particle(x, y, z, mass) {
+      //   this.position = new THREE.Vector3();
+      //   this.previous = new THREE.Vector3();
+      //   this.original = new THREE.Vector3();
+      //   this.a = new THREE.Vector3(0, 0, 0);
+      //   this.mass = mass;
+      //   this.invMass = 1 / mass;
+      //   this.tmp = new THREE.Vector3();
+      //   this.tmp2 = new THREE.Vector3();
+      //   this.distance = 0;
+      //   this.adj = [];
+      //
+      //   this.position.set(x, y, z);
+      //   this.previous.set(x, y, z);
+      //   this.original.set(x, y, z);
+      // }
 
-        this.position.set(x, y, z);
-        this.previous.set(x, y, z);
-        this.original.set(x, y, z);
-      }
-
-      Particle.prototype.addForce = function (force) {
-        this.a.add(this.tmp2.copy(force).multiplyScalar(this.invMass));
-      };
-
-      Particle.prototype.integrate = function (timesq) {
-        var newPos = this.tmp.subVectors(this.position, this.previous);
-        newPos.multiplyScalar(DRAG).add(this.position);
-        newPos.add(this.a.multiplyScalar(timesq));
-
-        this.tmp = this.previous;
-        this.previous = this.position;
-        this.position = newPos;
-
-        this.a.set(0, 0, 0);
-      };
+      // Particle.prototype.addForce = function (force) {
+      //   this.a.add(this.tmp2.copy(force).multiplyScalar(this.invMass));
+      // };
+      //
+      // Particle.prototype.integrate = function (timesq) {
+      //   var newPos = this.tmp.subVectors(this.position, this.previous);
+      //   newPos.multiplyScalar(DRAG).add(this.position);
+      //   newPos.add(this.a.multiplyScalar(timesq));
+      //
+      //   this.tmp = this.previous;
+      //   this.previous = this.position;
+      //   this.position = newPos;
+      //
+      //   this.a.set(0, 0, 0);
+      // };
 
       function updateMouse() {
         raycaster.setFromCamera(mouse, camera);
