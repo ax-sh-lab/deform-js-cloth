@@ -1197,19 +1197,19 @@
       directionalLight.position.set(1, 1, 1);
       scene.add(directionalLight);
 
-      var directionalLight2 = new THREE.DirectionalLight(0x8bbab4, 1.6);
+      const directionalLight2 = new THREE.DirectionalLight(0x8bbab4, 1.6);
       directionalLight2.position.set(1, 1, -1);
       scene.add(directionalLight2);
 
-      var light = new THREE.AmbientLight(0x999999); // soft white light
+      const light = new THREE.AmbientLight(0x999999); // soft white light
       scene.add(light);
-      var plight = new THREE.PointLight(0xffffff, 1.0, 700);
+      const plight = new THREE.PointLight(0xffffff, 1.0, 700);
       plight.position.set(0, 350, 0);
       scene.add(plight);
 
-      var textureLoader = new THREE.TextureLoader();
-      var maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
-      var texture1 = textureLoader.load(
+      const textureLoader = new THREE.TextureLoader();
+      const maxAnisotropy = renderer.capabilities.getMaxAnisotropy();
+      const texture1 = textureLoader.load(
         "https://raw.githubusercontent.com/aatishb/drape/master/textures/patterns/circuit_pattern.png"
       );
 
@@ -1217,13 +1217,13 @@
       texture1.repeat.x = 0.8;
       texture1.offset.x = 0.1;
       texture1.updateMatrix();
-      var mesh;
+      let mesh;
 
       function createParticles() {
         const MeshMaterial = new THREE.MeshPhongMaterial({
           color: 0xaa2949,
           specular: 0x030303,
-          map: texture1,
+          // map: texture1,
           side: THREE.DoubleSide,
           alphaTest: 0.7,
         });
