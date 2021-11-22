@@ -1302,17 +1302,15 @@
 
           if (click && psel) {
             offset = mouse3d.clone().sub(particles[psel].position);
-            for (i = 0; i < particles.length; i++) {
-              distance = particles[psel].original.distanceTo(
-                particles[i].original
-              );
+            particles.forEach((particle) => {
+              distance = particles[psel].original.distanceTo(particle.original);
 
-              if (particles[i].distance < 10) {
-                particles[i].position.add(
+              if (particle.distance < 10) {
+                particle.position.add(
                   offset.multiplyScalar(1.0 - 0 * (distance / 10))
                 );
               }
-            }
+            });
           }
         }
       }
