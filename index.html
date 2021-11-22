@@ -1381,18 +1381,20 @@
           !mouse3d.equals(new THREE.Vector3(0, 0, 0))
         ) {
           dist = 9999;
-          for (i = 0; i < particles.length; i++) {
-            tmp = mouse3d.distanceTo(particles[i].position);
+          particles.forEach((particle, n) => {
+            tmp = mouse3d.distanceTo(particle.position);
             if (tmp < dist) {
               dist = tmp;
-              psel = i;
+              psel = n;
             }
-          }
-          for (i = 0; i < particles.length; i++) {
-            particles[i].distance = particles[psel].original.distanceTo(
-              particles[i].original
+          });
+
+          // individual
+          particles.forEach((particle) => {
+            particle.distance = particles[psel].original.distanceTo(
+              particle.original
             );
-          }
+          });
         }
 
         newPlane = new THREE.Plane(camera.position.clone().normalize(), -100);
