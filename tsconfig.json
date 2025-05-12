@@ -1,0 +1,9 @@
+{
+  // My code runs in the DOM:
+  "extends": "@total-typescript/tsconfig/tsc/dom/app",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src"]
+}
