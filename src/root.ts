@@ -1,6 +1,6 @@
 // import * as THREE from '../js/three.min.js'
 
-var THREE: {Vector3: ()=> { multiplyScalar:any }} & any;
+var THREE: { Vector3: () => { multiplyScalar: any } } & any;
 var Stats: any;
 class Particle {
   position = new THREE.Vector3();
@@ -93,8 +93,7 @@ let mouse = new THREE.Vector2(0.5, 0.5);
 let tmpmouse = new THREE.Vector3();
 let mouse3d = new THREE.Vector3(0, 0, 0);
 let raycaster = new THREE.Raycaster();
-let psel: number| undefined;
-
+let psel: number | undefined;
 
 const directionalLight = new THREE.DirectionalLight(0xBA8B8B, 1.0);
 directionalLight.position.set(1, 1, 1);
@@ -235,9 +234,9 @@ function simulate() {
     }
 
     if (click && psel) {
-      offset = mouse3d.clone().sub(particles[psel].position);
+      const offset = mouse3d.clone().sub(particles[psel].position);
       particles.forEach((particle) => {
-        distance = particles[psel].original.distanceTo(
+        const distance = particles[psel].original.distanceTo(
           particle.original,
         );
 
@@ -293,8 +292,8 @@ function update() {
 
   stats.end();
 }
-let w:number;
-let h:number;
+let w: number;
+let h: number;
 
 window.onresize = function () {
   w = window.innerWidth;
