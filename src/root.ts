@@ -189,7 +189,8 @@ function createParticles() {
 }
 
 const DRAG = 0.97;
-const PULL = 7.5;
+// pull let go force
+const PULL = 107.5;
 const TIMESTEP = 18 / 1000;
 const TIMESTEP_SQ = TIMESTEP * TIMESTEP;
 // const GRAVITY = 981 * 1.4;
