@@ -93,7 +93,7 @@ let mouse = new THREE.Vector2(0.5, 0.5);
 let tmpmouse = new THREE.Vector3();
 let mouse3d = new THREE.Vector3(0, 0, 0);
 let raycaster = new THREE.Raycaster();
-let psel: number;
+let psel: number| undefined;
 
 
 const directionalLight = new THREE.DirectionalLight(0xBA8B8B, 1.0);
@@ -133,8 +133,6 @@ function createParticles() {
   const MeshMaterial = new THREE.MeshPhongMaterial({
     color: 0xAA2949,
     specular: 0x030303,
-    castShadow: true,
-    receiveShadow: true,
     wireframe: true,
     // map: texture1,
     side: THREE.DoubleSide,
@@ -294,6 +292,8 @@ function update() {
 
   stats.end();
 }
+let w:number;
+let h:number;
 
 window.onresize = function () {
   w = window.innerWidth;
