@@ -13,7 +13,7 @@ class Particle {
   tmp = new THREE.Vector3();
   tmp2 = new THREE.Vector3();
   distance = 0;
-  adj = [];
+  adj: any[] = [];
   constructor(x: number, y: number, z: number, mass: number) {
     this.position.set(x, y, z);
     this.previous.set(x, y, z);
@@ -77,7 +77,7 @@ controls.update();
 const stats = new Stats();
 document.body.appendChild(stats.dom);
 const particles: Particle[] = [];
-const constraints = [];
+const constraints: any[] = [];
 const plane = new THREE.Vector3();
 
 width = height = 100;
@@ -144,7 +144,6 @@ function createParticles() {
 
   geometry = new THREE.SphereGeometry(100, SEGMENTS, SEGMENTS); // modify to your linking
   // geometry = new THREE.SphereGeometry(100, 1, 1); // modify to your linking
-
 
   const { faces, vertices } = geometry;
 
@@ -249,7 +248,7 @@ function simulate() {
 
 const diff = new THREE.Vector3();
 
-function satisfyConstraints(p1, p2, distance) {
+function satisfyConstraints(p1: any, p2: any, distance: number) {
   diff.subVectors(p2.position, p1.position);
   const currentDist = diff.length();
   if (currentDist === 0) {
