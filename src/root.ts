@@ -345,25 +345,25 @@ function updateMouse() {
   }
 }
 
-window.onmousemove = function (evt) {
+window.onpointermove = function (evt) {
   mouse.x = (evt.pageX / window.innerWidth) * 2 - 1;
   mouse.y = -(evt.pageY / window.innerHeight) * 2 + 1;
 };
 
-window.onmousedown = function (evt) {
+window.onpointerdown = function (evt) {
   if (evt.button === 0) {
     click = true;
   }
 };
 
-window.onmouseup = function (evt) {
+window.onpointerup = function (evt) {
   if (evt.button === 0) {
     click = false;
     psel = undefined;
   }
 };
 
-window.onmouseout = function (evt) {
+window.onpointerout = function (evt) {
   if (evt.button === 0) {
     click = false;
     psel = undefined;
