@@ -1,9 +1,15 @@
+
+
+var THREE: any;
+
+
 class Particle {
     position = new THREE.Vector3();
     previous = new THREE.Vector3();
     original = new THREE.Vector3();
     a = new THREE.Vector3(0, 0, 0);
     mass = 0;
+    invMass = 0;
 
     tmp = new THREE.Vector3();
     tmp2 = new THREE.Vector3();
