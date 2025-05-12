@@ -1,7 +1,7 @@
 // import * as THREE from '../js/three.min.js'
 
-var THREE: any;
-
+var THREE: {Vector3: ()=> { multiplyScalar:any }} & any;
+var Stats: any;
 class Particle {
   position = new THREE.Vector3();
   previous = new THREE.Vector3();
@@ -44,7 +44,7 @@ class Particle {
   }
 }
 
-renderer = new THREE.WebGLRenderer({
+let renderer = new THREE.WebGLRenderer({
   antialias: true,
   alpha: true,
 });
@@ -52,10 +52,10 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-scene = new THREE.Scene();
+let scene = new THREE.Scene();
 renderer.setClearColor(0x0F1519);
 
-camera = new THREE.PerspectiveCamera(
+let camera = new THREE.PerspectiveCamera(
   60,
   window.innerWidth / window.innerHeight,
   1,
@@ -65,7 +65,7 @@ camera.position.z = -150;
 camera.position.y = 300;
 // camera.position.x = 160;
 
-controls = new THREE.OrbitControls(camera, renderer.domElement);
+let controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enablePan = false;
 controls.maxDistance = 400;
 controls.minDistance = 150;
@@ -78,24 +78,23 @@ const stats = new Stats();
 document.body.appendChild(stats.dom);
 const particles: Particle[] = [];
 const constraints: any[] = [];
-const plane = new THREE.Vector3();
+// const plane = new THREE.Vector3();
 
-width = height = 100;
-dim = 200;
+// let width = 100;
+// let height = 100;
+// let dim = 200;
 
-const restDistance = dim / height;
-const diagonalDist = Math.sqrt(restDistance * restDistance * 2);
-const bigDist = Math.sqrt(restDistance * restDistance * 4);
+// const restDistance = dim / height;
+// const diagonalDist = Math.sqrt(restDistance * restDistance * 2);
+// const bigDist = Math.sqrt(restDistance * restDistance * 4);
 
 let click = false;
-mouse = new THREE.Vector2(0.5, 0.5);
-tmpmouse = new THREE.Vector3();
-mouse3d = new THREE.Vector3(0, 0, 0);
-raycaster = new THREE.Raycaster();
-plane3d = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-psel = undefined;
+let mouse = new THREE.Vector2(0.5, 0.5);
+let tmpmouse = new THREE.Vector3();
+let mouse3d = new THREE.Vector3(0, 0, 0);
+let raycaster = new THREE.Raycaster();
+let psel: number;
 
-let verts;
 
 const directionalLight = new THREE.DirectionalLight(0xBA8B8B, 1.0);
 directionalLight.position.set(1, 1, 1);
@@ -134,6 +133,9 @@ function createParticles() {
   const MeshMaterial = new THREE.MeshPhongMaterial({
     color: 0xAA2949,
     specular: 0x030303,
+    castShadow: true,
+    receiveShadow: true,
+    wireframe: true,
     // map: texture1,
     side: THREE.DoubleSide,
     alphaTest: 0.7,
@@ -192,12 +194,16 @@ const DRAG = 0.97;
 const PULL = 7.5;
 const TIMESTEP = 18 / 1000;
 const TIMESTEP_SQ = TIMESTEP * TIMESTEP;
-const GRAVITY = 981 * 1.4;
-const gravity = new THREE.Vector3(0, -0.98, 0).multiplyScalar(
-  0.1,
-);
+// const GRAVITY = 981 * 1.4;
+// const gravity = new THREE.Vector3(0, -0.98, 0).multiplyScalar(
+//   0.1,
+// );
 
 function simulate() {
+  let j: number;
+  let i: number;
+  let il: number;
+  let constraint: any[];
   particles.forEach((particle) => {
     const force = new THREE.Vector3().copy(particle.original);
     particle.addForce(
@@ -262,9 +268,6 @@ function satisfyConstraints(p1: any, p2: any, distance: number) {
   p2.position.sub(correctionHalf);
 }
 
-currentTime = Date.now();
-accumulator = 0;
-dt = TIMESTEP * 1000;
 createParticles();
 
 function update() {
@@ -315,9 +318,9 @@ function updateMouse() {
     click &&
     !mouse3d.equals(new THREE.Vector3(0, 0, 0))
   ) {
-    dist = 9999;
+    let dist = 9999;
     particles.forEach((particle, n) => {
-      tmp = mouse3d.distanceTo(particle.position);
+      const tmp = mouse3d.distanceTo(particle.position);
       if (tmp < dist) {
         dist = tmp;
         psel = n;
@@ -332,7 +335,7 @@ function updateMouse() {
     });
   }
 
-  newPlane = new THREE.Plane(
+  const newPlane = new THREE.Plane(
     camera.position.clone().normalize(),
     -100,
   );
