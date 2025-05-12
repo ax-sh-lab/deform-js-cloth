@@ -1,4 +1,4 @@
-
+// import * as THREE from '../js/three.min.js'
 
 var THREE: any;
 
@@ -88,7 +88,7 @@ const restDistance = dim / height;
 const diagonalDist = Math.sqrt(restDistance * restDistance * 2);
 const bigDist = Math.sqrt(restDistance * restDistance * 4);
 
-click = false;
+let click = false;
 mouse = new THREE.Vector2(0.5, 0.5);
 tmpmouse = new THREE.Vector3();
 mouse3d = new THREE.Vector3(0, 0, 0);
@@ -125,6 +125,7 @@ texture1.anisotropy = maxAnisotropy;
 texture1.repeat.x = 0.8;
 texture1.offset.x = 0.1;
 texture1.updateMatrix();
+
 let mesh;
 
 function createParticles() {
