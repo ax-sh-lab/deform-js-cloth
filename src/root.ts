@@ -76,7 +76,7 @@ controls.update();
 
 const stats = new Stats();
 document.body.appendChild(stats.dom);
-const particles = [];
+const particles: Particle[] = [];
 const constraints = [];
 const plane = new THREE.Vector3();
 
@@ -125,8 +125,11 @@ texture1.repeat.x = 0.8;
 texture1.offset.x = 0.1;
 texture1.updateMatrix();
 
-let mesh;
+let mesh: any;
+type Geo = { faces: { a: any; b: any; c: any }[]; vertices: [] };
+let geometry: Geo;
 
+const SEGMENTS = 200;
 function createParticles() {
   const MeshMaterial = new THREE.MeshPhongMaterial({
     color: 0xAA2949,
@@ -139,13 +142,18 @@ function createParticles() {
   // geometry = new THREE.PlaneGeometry(dim, dim, width-1, height-1);
   // geometry.rotateX ( -Math.PI/2 );
 
-  geometry = new THREE.SphereGeometry(100, 100, 100); // modify to your linking
+  geometry = new THREE.SphereGeometry(100, SEGMENTS, SEGMENTS); // modify to your linking
   // geometry = new THREE.SphereGeometry(100, 1, 1); // modify to your linking
 
+
   const { faces, vertices } = geometry;
-  vertices.forEach(({ x, y, z }) => {
+
+  // vertices position
+  for (let i = 0; i < vertices.length; i++) {
+    const { x, y, z } = vertices[i];
+
     particles.push(new Particle(x, y, z, 0.1));
-  });
+  }
 
   // for all the neighbouring vertices
   faces.forEach((face) => {
