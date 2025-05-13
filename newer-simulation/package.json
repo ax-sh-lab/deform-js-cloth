@@ -2,6 +2,10 @@
   "name": "newer-simulation",
   "type": "module",
   "private": true,
+  "scripts": {
+    "serve": "bunx serve .",
+    "dev": "vite"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "three": "^0.176.0",
