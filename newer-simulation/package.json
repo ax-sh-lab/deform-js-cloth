@@ -1,0 +1,17 @@
+{
+  "name": "newer-simulation",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest",
+    "three": "^0.176.0",
+    "vite": "^6.3.5"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@types/three": "^0.176.0"
+  }
+}
