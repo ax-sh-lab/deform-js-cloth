@@ -116,15 +116,17 @@ function init() {
 function createClothParticles(radius: number, particleMass: number) {
   const material = new THREE.MeshPhongMaterial({
     color: 0xAA2949,
-    specular: 0x111111, // Darker specular
+    specular: 0x111111,
     shininess: 50,
-    // map: texture1, // Uncomment to use texture
     side: THREE.DoubleSide,
-    wireframe: false, // Set to true to see wireframe
-    // alphaTest: 0.5, // If using transparent textures
+    wireframe: false,
   });
 
-  geometry = new THREE.SphereGeometry(radius, SEGMENTS, SEGMENTS);
+  // SEGMENTS is used for both widthSegments and heightSegments in SphereGeometry
+  const widthSegments = SEGMENTS;
+  const heightSegments = SEGMENTS;
+
+  geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments);
 
   const positions = geometry.attributes.position;
   for (let i = 0; i < positions.count; i++) {
@@ -134,44 +136,87 @@ function createClothParticles(radius: number, particleMass: number) {
     particles.push(new Particle(x, y, z, particleMass));
   }
 
-  // Pin top particles (example)
-  // particles.forEach(p => {
-  //     if (p.original.y > radius * 0.8) { // Pin particles near the top
-  //         p.invMass = 0; // Make them immovable
-  //     }
-  // });
-
-  // Create constraints from triangle edges
-  const indices = geometry.index!.array; // SphereGeometry is indexed
+  const indices = geometry.index!.array;
   const addedConstraints = new Set<string>();
 
-  function addConstraintIfNew(p1Idx: number, p2Idx: number) {
-    const key1 = `${p1Idx}-${p2Idx}`;
-    const key2 = `${p2Idx}-${p1Idx}`;
-    if (!addedConstraints.has(key1) && !addedConstraints.has(key2)) {
+  // Using a canonical key for the set is slightly cleaner
+  function addConstraintIfNewWithDistance(
+    p1Idx: number,
+    p2Idx: number,
+    restDistance: number,
+  ) {
+    const canonicalKey = `${Math.min(p1Idx, p2Idx)}-${Math.max(p1Idx, p2Idx)}`;
+    if (!addedConstraints.has(canonicalKey)) {
       const p1 = particles[p1Idx];
       const p2 = particles[p2Idx];
-      constraints.push([p1, p2, p1.original.distanceTo(p2.original)]);
-      addedConstraints.add(key1);
+      if (p1 && p2) { // Ensure particles exist
+        constraints.push([p1, p2, restDistance]);
+        addedConstraints.add(canonicalKey);
+      } else {
+        console.warn(
+          "Tried to create constraint with non-existent particle(s)",
+          p1Idx,
+          p2Idx,
+        );
+      }
     }
   }
 
+  // Your original addConstraintIfNew function (calculates distance internally)
+  function addConstraintIfNewDefaultDistance(p1Idx: number, p2Idx: number) {
+    const canonicalKey = `${Math.min(p1Idx, p2Idx)}-${Math.max(p1Idx, p2Idx)}`;
+    if (!addedConstraints.has(canonicalKey)) {
+      const p1 = particles[p1Idx];
+      const p2 = particles[p2Idx];
+      if (p1 && p2) {
+        constraints.push([p1, p2, p1.original.distanceTo(p2.original)]);
+        addedConstraints.add(canonicalKey);
+      } else {
+        console.warn(
+          "Tried to create constraint (default dist) with non-existent particle(s)",
+          p1Idx,
+          p2Idx,
+        );
+      }
+    }
+  }
+
+  // 1. Create constraints from triangle edges (structural springs)
   for (let i = 0; i < indices.length; i += 3) {
     const vA = indices[i];
     const vB = indices[i + 1];
     const vC = indices[i + 2];
-    addConstraintIfNew(vA, vB);
-    addConstraintIfNew(vB, vC);
-    addConstraintIfNew(vC, vA);
+    addConstraintIfNewDefaultDistance(vA, vB);
+    addConstraintIfNewDefaultDistance(vB, vC);
+    addConstraintIfNewDefaultDistance(vC, vA);
   }
 
-  // Add some diagonal constraints for more structure (Bend springs)
-  // This is a simplified way; proper bend springs often connect vertices skipping one vertex.
-  // For a sphere, the existing edges provide good structure. For a plane, this is more critical.
-  // Example: For every vertex, connect to its "next next" neighbor if available
-  // This part is complex for a sphere and might not be needed with enough segments.
-  // If you were using a PlaneGeometry, you would add constraints like:
-  // particles[i*width + j] to particles[(i+2)*width+j] and particles[i*width + (j+2)] etc.
+  // 2. Add constraints for the longitudinal seam to make the sphere seamless
+  // A SphereGeometry(radius, widthSegments, heightSegments) generates
+  // (widthSegments + 1) vertices per latitude row, for (heightSegments + 1) rows.
+  // Vertices are ordered by row (v), then by column (u) within that row.
+  // Index of vertex(u,v) = v * (widthSegments + 1) + u
+
+  for (let v = 0; v <= heightSegments; v++) { // Iterate through all latitude rows
+    // Particle at the start of the row (phi = 0)
+    const pIdxStart = v * (widthSegments + 1) + 0;
+    // Particle at the end of the row (phi = 2*PI, same physical location as start)
+    const pIdxEnd = v * (widthSegments + 1) + widthSegments;
+
+    // These particles should be at the same location, so rest distance is 0.
+    // The addConstraintIfNewWithDistance function will use this 0.
+    if (pIdxStart !== pIdxEnd) { // Should always be true if widthSegments > 0
+      addConstraintIfNewWithDistance(pIdxStart, pIdxEnd, 0);
+    }
+  }
+
+  // Note: The poles (v=0 and v=heightSegments) are also handled by the loop above.
+  // For v=0 (top pole), pIdxStart will be particle 0, and pIdxEnd will be particle 'widthSegments'.
+  // All vertices in the first row (v=0) are coincident at the North Pole.
+  // All vertices in the last row (v=heightSegments) are coincident at the South Pole.
+  // The triangle edge constraints should already pull these pole vertices together.
+  // The seam constraint for v=0 and v=heightSegments connects the "first" and "last"
+  // of these coincident pole vertices, further reinforcing their connection.
 
   mesh = new THREE.Mesh(geometry, material);
   scene.add(mesh);
