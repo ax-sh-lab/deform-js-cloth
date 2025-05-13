@@ -222,6 +222,86 @@ function createClothParticles(radius: number, particleMass: number) {
   scene.add(mesh);
 }
 
+// kind of works but the simulation is broken
+// ... (other constants and Particle class)
+// const ICOSAHEDRON_DETAIL = 3;
+// const CLOTH_RADIUS = 100;
+// ...
+
+// function createClothParticles(radius: number, particleMass: number) {
+//   const material = new THREE.MeshPhongMaterial({
+//     color: 0xAA2949,
+//     specular: 0x111111,
+//     shininess: 50,
+//     side: THREE.DoubleSide,
+//     wireframe: false,
+//   });
+//
+//   geometry = new THREE.IcosahedronGeometry(radius, ICOSAHEDRON_DETAIL);
+//
+//   const positions = geometry.attributes.position;
+//   for (let i = 0; i < positions.count; i++) {
+//     const x = positions.getX(i);
+//     const y = positions.getY(i);
+//     const z = positions.getZ(i);
+//     particles.push(new Particle(x, y, z, particleMass));
+//   }
+//
+//   const addedConstraints = new Set<string>();
+//
+//   function addConstraintIfNew(p1Idx: number, p2Idx: number) {
+//     const canonicalKey = `${Math.min(p1Idx, p2Idx)}-${Math.max(p1Idx, p2Idx)}`;
+//     if (!addedConstraints.has(canonicalKey)) {
+//       const p1 = particles[p1Idx];
+//       const p2 = particles[p2Idx];
+//       if (p1 && p2) {
+//         constraints.push([p1, p2, p1.original.distanceTo(p2.original)]);
+//         addedConstraints.add(canonicalKey);
+//       } else {
+//         console.warn(
+//           "Tried to create constraint with non-existent particle(s)",
+//           p1Idx,
+//           p2Idx,
+//         );
+//       }
+//     }
+//   }
+//
+//   // Check if the geometry is indexed
+//   if (geometry.index) {
+//     const indices = geometry.index.array; // Now we know geometry.index is not null
+//     for (let i = 0; i < indices.length; i += 3) {
+//       const vA = indices[i];
+//       const vB = indices[i + 1];
+//       const vC = indices[i + 2];
+//       addConstraintIfNew(vA, vB);
+//       addConstraintIfNew(vB, vC);
+//       addConstraintIfNew(vC, vA);
+//     }
+//   } else {
+//     // Fallback for non-indexed geometry (less common for IcosahedronGeometry)
+//     // Here, every 3 vertices in the position attribute form a triangle
+//     console.warn(
+//       "Geometry is non-indexed. Creating constraints from sequential vertices.",
+//     );
+//     for (let i = 0; i < positions.count; i += 3) {
+//       const vA = i;
+//       const vB = i + 1;
+//       const vC = i + 2;
+//
+//       // Ensure we don't go out of bounds if positions.count is not a multiple of 3
+//       if (vC < positions.count) {
+//         addConstraintIfNew(vA, vB);
+//         addConstraintIfNew(vB, vC);
+//         addConstraintIfNew(vC, vA);
+//       }
+//     }
+//   }
+//
+//   mesh = new THREE.Mesh(geometry, material);
+//   scene.add(mesh);
+// }
+
 const diff = new THREE.Vector3(); // Scratch vector for satisfyConstraints
 function satisfyConstraints(
   p1: Particle,
