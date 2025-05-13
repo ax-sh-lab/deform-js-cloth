@@ -222,7 +222,7 @@ function createClothParticles(radius: number, particleMass: number) {
   scene.add(mesh);
 }
 
-// kind of works but the simulation is broken
+// NOTE kind of works but the simulation is broken
 // ... (other constants and Particle class)
 // const ICOSAHEDRON_DETAIL = 3;
 // const CLOTH_RADIUS = 100;
